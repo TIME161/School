@@ -1,46 +1,57 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
+
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class StudentService {
-    private  final Map<Long, Student> students = new HashMap<>();
-    private long counterId = 0;
+    private final StudentRepository studentRepository;
 
-
-    public Student add(String name, int age) {
-        long id = counterId;
-        counterId++;
-        Student newStudent = new Student(id, name, age);
-        students.put(id, newStudent);
-        return newStudent;
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
-    public Map<Long, Student> getAll() {
-        return students;
+    public Object add(Student student) {
+        return studentRepository.save(student);
     }
 
-    public Student update(long id, String name, int age) {
-        Student studentForUpdate = students.get(id);
-        studentForUpdate.setName(name);
-        studentForUpdate.setAge(age);
-        return studentForUpdate;
+    public List getAll() {
+        return studentRepository.findAll();
     }
 
-    public Student delete(long id) {
-        return students.remove(id);
+    public Student getById(Long id) {
+        Optional<Student> student = studentRepository.findById(id);
+        if (student.isPresent()) {
+            return student.get();
+        } else {
+            throw new RuntimeException("Student not found with id: " + id);
+        }
     }
 
-    public Collection<Student> findByAge(int age) {
-        ArrayList<Student> result = new ArrayList<>();
-        for (Student student : students.values()) {
+    public Object update(Student student) {
+        return studentRepository.save(student);
+    }
+
+    public void delete(long id) {
+        studentRepository.deleteById(id);
+    }
+
+    public List<Student> getByAge(int age) {
+        List<Student> students = studentRepository.findAll(Sort.by("age").ascending());
+        List<Student> result = new ArrayList<>();
+        for (Student student : students) {
             if (student.getAge() == age) {
                 result.add(student);
             }
+        }
+        if (result.isEmpty()) {
+            throw new RuntimeException("Student not found with age: " + age);
         }
         return result;
     }

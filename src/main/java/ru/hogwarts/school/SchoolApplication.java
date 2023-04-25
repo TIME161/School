@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 @OpenAPIDefinition
 public class SchoolApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SchoolApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SchoolApplication.class, args);
+    }
 
 }

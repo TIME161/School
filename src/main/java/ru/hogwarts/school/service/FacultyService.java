@@ -1,45 +1,59 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.*;
 
 @Service
 public class FacultyService {
-    private long counterId = 0;
 
-    private final Map<Long, Faculty> faculties = new HashMap<>();
+    @Autowired
+    private final FacultyRepository facultyRepository;
 
-    public Faculty add(String name, String color) {
-        long id = counterId;
-        counterId++;
-        Faculty newFaculty = new Faculty(id, name, color);
-        faculties.put(id, newFaculty);
-        return newFaculty;
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
     }
 
-    public Map<Long, Faculty> getAll() {
-        return faculties;
+
+    public Faculty add(Faculty faculty) {
+        return facultyRepository.save(faculty);
     }
 
-    public Faculty update(long id, String name, String color) {
-        Faculty facultyForUpdate = faculties.get(id);
-        facultyForUpdate.setName(name);
-        facultyForUpdate.setColor(color);
-        return facultyForUpdate;
+    public List getAll() {
+        return facultyRepository.findAll();
     }
 
-    public Faculty delete(long id) {
-        return faculties.remove(id);
+    public Object update(Faculty faculty) {
+        return facultyRepository.save(faculty);
     }
 
-    public Collection<Faculty> findByColor(String color) {
-        ArrayList<Faculty> result = new ArrayList<>();
-        for (Faculty faculty : faculties.values()) {
-            if (faculty.getColor() != null && faculty.getColor().equals(color)) {
+    public void delete(long id) {
+        facultyRepository.deleteById(id);
+    }
+
+    public Faculty getById(Long id) {
+        Optional<Faculty> faculty = facultyRepository.findById(id);
+        if (faculty.isPresent()) {
+            return faculty.get();
+        } else {
+            throw new RuntimeException("Faculty not found with id: " + id);
+        }
+    }
+
+    public List<Faculty> getByColor(String color) {
+        List<Faculty> faculties = facultyRepository.findAll(Sort.by("color").ascending());
+        List<Faculty> result = new ArrayList<>();
+        for (Faculty faculty : faculties) {
+            if (Objects.equals(faculty.getColor(), color)) {
                 result.add(faculty);
             }
+        }
+        if (result.isEmpty()) {
+            throw new RuntimeException("Color not found: " + color);
         }
         return result;
     }
