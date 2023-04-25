@@ -1,6 +1,4 @@
-
 package ru.hogwarts.school.service;
-
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;

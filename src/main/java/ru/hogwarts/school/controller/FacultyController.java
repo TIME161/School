@@ -3,8 +3,10 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -23,30 +25,37 @@ public class FacultyController {
         return facultyService.add(request);
     }
 
-    @GetMapping("/getAll")
-    public List getAll() {
-        return facultyService.getAll();
-    }
-
     @PutMapping
     public Object update(@RequestBody Faculty request) {
         return facultyService.update(request);
     }
 
     @DeleteMapping
-    public ResponseEntity delete(@PathVariable long id) {
+    public ResponseEntity delete(@RequestParam Long id) {
         facultyService.delete(id);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/color/{color}")
-    public List<Faculty> getByAge(@PathVariable String color) {
-        return facultyService.getByColor(color);
-    }
+    @GetMapping()
+    public ResponseEntity<List<Faculty>> getFaculties(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String color) {
 
-    @GetMapping("/id/{id}")
-    public ResponseEntity<Faculty> getStudentById(@PathVariable Long id) {
-        Faculty faculty = facultyService.getById(id);
-        return ResponseEntity.ok(faculty);
+        List<Faculty> faculties;
+
+        if (id != null) {
+            Faculty faculty = facultyService.getById(id);
+            faculties = Collections.singletonList(faculty);
+        } else if (color != null) {
+            faculties = facultyService.getByColor(color);
+        } else {
+            faculties = facultyService.getAll();
+        }
+
+        if (faculties.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(faculties);
+        }
     }
 }

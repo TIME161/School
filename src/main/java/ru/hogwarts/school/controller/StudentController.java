@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -25,32 +26,38 @@ public class StudentController {
         return (Student) studentService.add(request);
     }
 
-    @GetMapping("/getAll")
-    public List getAll() {
-
-        return studentService.getAll();
-    }
-
-    @GetMapping("/id/{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
-        Student student = studentService.getById(id);
-        return ResponseEntity.ok(student);
-    }
-
     @PutMapping
     public Object update(@RequestBody Student request) {
 
         return studentService.update(request);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
+    @DeleteMapping()
+    public ResponseEntity delete(@RequestParam Long id) {
         studentService.delete(id);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/age/{age}")
-    public List<Student> getByAge(@PathVariable int age) {
-        return studentService.getByAge(age);
+    @GetMapping()
+    public ResponseEntity<List<Student>> getStudents(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) Integer age) {
+
+        List<Student> students;
+
+        if (id != null) {
+            Student student = studentService.getById(id);
+            students = Collections.singletonList(student);
+        } else if (age != null) {
+            students = studentService.getByAge(age);
+        } else {
+            students = studentService.getAll();
+        }
+
+        if (students.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(students);
+        }
     }
 }
