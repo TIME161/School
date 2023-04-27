@@ -2,6 +2,7 @@ package ru.hogwarts.school.service;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -21,7 +22,7 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public List getAll() {
+    public List<Student> getAll() {
         return studentRepository.findAll();
     }
 
@@ -54,5 +55,37 @@ public class StudentService {
             throw new RuntimeException("Student not found with age: " + age);
         }
         return result;
+    }
+
+    public List<Student> findByAgeBetween(int min, int max) {
+        List<Student> students = studentRepository.findAll(Sort.by("age").ascending());
+        List<Student> result = new ArrayList<>();
+        for (Student student : students) {
+            int age = student.getAge();
+            if (age >= min && age <= max) {
+                result.add(student);
+            }
+        }
+        if (result.isEmpty()) {
+            throw new RuntimeException("Students not found with age in range: " + min + " - " + max);
+        }
+        return result;
+    }
+
+    public List<Student> findByFaculty(Long id) {
+        return studentRepository.findByFaculty_Id(id);
+    }
+
+    public Student findByName(String name) {
+        return studentRepository.findByNameIgnoreCase(name);
+    }
+
+    public Faculty getFacultyByStudentName(String name) {
+        Student student = studentRepository.findByNameIgnoreCase(name);
+        if (student != null) {
+            return student.getFaculty();
+        } else {
+            return null;
+        }
     }
 }
