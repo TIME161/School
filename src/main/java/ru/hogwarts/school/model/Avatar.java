@@ -17,7 +17,6 @@ public class Avatar {
     private Student student;
 
     public Avatar() {
-
     }
 
     public long getId() {
