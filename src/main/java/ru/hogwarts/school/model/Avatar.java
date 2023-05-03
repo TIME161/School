@@ -19,6 +19,14 @@ public class Avatar {
     public Avatar() {
     }
 
+    public Avatar(long id, String filePath, long fileSize, String mediaType, byte[] data) {
+        this.id = id;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
+        this.mediaType = mediaType;
+        this.data = data;
+    }
+
     public long getId() {
         return id;
     }

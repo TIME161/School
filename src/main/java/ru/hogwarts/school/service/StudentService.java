@@ -88,4 +88,16 @@ public class StudentService {
             return null;
         }
     }
+
+    public Integer countOfStudents() {
+        return studentRepository.howMuchStudents();
+    }
+
+    public Integer avgAgeOfStudents() {
+        return studentRepository.avgAgeStudents();
+    }
+
+    public List<Student> getLastFiveStudents() {
+        return studentRepository.findLastFiveStudents();
+    }
 }

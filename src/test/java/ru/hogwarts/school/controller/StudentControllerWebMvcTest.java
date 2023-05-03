@@ -20,6 +20,7 @@ import ru.hogwarts.school.service.FacultyService;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -168,6 +169,65 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$[1].name").value(name2))
                 .andExpect(jsonPath("$[1].age").value(age2))
                 .andExpect(jsonPath("$[1].faculty").value(faculty2));
+    }
+
+    @Test
+    public void testGetCountStudents() throws Exception {
+
+        int count = 10;
+        when(studentService.countOfStudents()).thenReturn(count);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/student/info/count"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(String.valueOf(count)));
+    }
+
+    @Test
+    public void testAvgAgeOfStudents() throws Exception {
+        int avgAge = 20;
+        when(studentService.avgAgeOfStudents()).thenReturn(avgAge);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/student/info/avg-age"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(String.valueOf(avgAge)));
+    }
+
+    @Test
+    public void testLastFiveStudents() throws Exception {
+        Faculty faculty = new Faculty(1L, "Puff", "Red");
+        List<Student> lastFiveStudents = Arrays.asList(
+                new Student(1L, "John", 15, faculty),
+                new Student(2L, "Jane", 15, faculty),
+                new Student(3L, "Bob", 15, faculty),
+                new Student(4L, "Alice", 15, faculty),
+                new Student(5L, "David", 15, faculty)
+        );
+        when(studentService.getLastFiveStudents()).thenReturn(lastFiveStudents);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/student/info/last-five-students"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].name").value("John"))
+                .andExpect(jsonPath("$[0].age").value(15))
+                .andExpect(jsonPath("$[0].faculty").value(faculty))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].name").value("Jane"))
+                .andExpect(jsonPath("$[1].age").value(15))
+                .andExpect(jsonPath("$[1].faculty").value(faculty))
+                .andExpect(jsonPath("$[2].id").value(3))
+                .andExpect(jsonPath("$[2].name").value("Bob"))
+                .andExpect(jsonPath("$[2].age").value(15))
+                .andExpect(jsonPath("$[2].faculty").value(faculty))
+                .andExpect(jsonPath("$[3].id").value(4))
+                .andExpect(jsonPath("$[3].name").value("Alice"))
+                .andExpect(jsonPath("$[3].age").value(15))
+                .andExpect(jsonPath("$[3].faculty").value(faculty))
+                .andExpect(jsonPath("$[4].id").value(5))
+                .andExpect(jsonPath("$[4].name").value("David"))
+                .andExpect(jsonPath("$[4].age").value(15))
+                .andExpect(jsonPath("$[4].faculty").value(faculty));
+
     }
 }
 
