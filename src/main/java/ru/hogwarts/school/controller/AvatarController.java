@@ -15,8 +15,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @RestController
+@RequestMapping("/avatars")
 public class AvatarController {
    private final AvatarService avatarService;
 
@@ -48,11 +50,19 @@ public class AvatarController {
         Avatar avatar = avatarService.findAvatar(id);
         Path path = Path.of(avatar.getFilePath());
         try (InputStream is = Files.newInputStream(path);
-             OutputStream os = response.getOutputStream();) {
+             OutputStream os = response.getOutputStream()) {
             response.setStatus(200);
             response.setContentType(avatar.getMediaType());
             response.setContentLength((int) avatar.getFileSize());
             is.transferTo(os);
         }
+    }
+    @GetMapping()
+    public List<Avatar> getAllAvatars(@RequestParam(required = false) Integer pageNumber,
+                                      @RequestParam(required = false) Integer pageSize) {
+        if (pageNumber != null && pageSize != null) {
+            return avatarService.findAllAvatarsWithPages(pageNumber,pageSize);
+        }
+        return avatarService.findAllAvatars();
     }
 }
