@@ -39,17 +39,34 @@ public class StudentController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Student>> getStudents(
+    public Object getStudents(
             @RequestParam(required = false) Long id,
-            @RequestParam(required = false) Integer age) {
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String nameForFindFaculty,
+            @RequestParam(required = false) Long facultyId,
+            @RequestParam(required = false) Integer age,
+            @RequestParam(required = false) Integer min,
+            @RequestParam(required = false) Integer max) {
 
         List<Student> students;
 
         if (id != null) {
             Student student = studentService.getById(id);
             students = Collections.singletonList(student);
-        } else if (age != null) {
+        } else if (name != null) {
+            Student student = studentService.findByName(name);
+            students = Collections.singletonList(student);
+        }
+        else if (nameForFindFaculty != null) {
+            return studentService.getFacultyByStudentName(nameForFindFaculty);
+        }
+        else if (facultyId != null) {
+            students = studentService.findByFaculty(facultyId);
+        }
+        else if (age != null) {
             students = studentService.getByAge(age);
+        } else if (min != null && max !=null) {
+            students = studentService.findByAgeBetween(min, max);
         } else {
             students = studentService.getAll();
         }
@@ -60,4 +77,20 @@ public class StudentController {
             return ResponseEntity.ok(students);
         }
     }
+
+    @GetMapping("/info/count")
+    public Integer getCountStudents() {
+        return studentService.countOfStudents();
+    }
+
+    @GetMapping("/info/avg-age")
+    public Integer avgAgeOfStudents() {
+        return studentService.avgAgeOfStudents();
+    }
+
+    @GetMapping("/info/last-five-students")
+    public List<Student> lastFiveStudents() {
+        return studentService.getLastFiveStudents();
+    }
+
 }

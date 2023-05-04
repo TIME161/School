@@ -8,7 +8,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.hogwarts.school.model.Faculty;
@@ -77,7 +76,7 @@ public class FacultyServiceTest {
 
     @Test
     public void deleteFacultyTest() {
-        Long facultyId = 1L;
+        long facultyId = 1L;
 
         facultyService.delete(facultyId);
 
@@ -100,24 +99,19 @@ public class FacultyServiceTest {
     }
 
     @Test
-    public void getFacultiesByColorTest() {
+    public void getFacultyByNameOrColorTest() {
         List<Faculty> faculties = new ArrayList<>();
         faculties.add(new Faculty(0L, "Engineering", "Blue"));
         faculties.add(new Faculty(1L, "Science", "Green"));
+        when(facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase("Engineering", "Blue")).thenReturn(faculties.subList(0, 1));
+        when(facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase("Green", "Red")).thenReturn(new ArrayList<>());
 
-        when(facultyRepository.findAll(Sort.by("color").ascending())).thenReturn(faculties);
+        List<Faculty> facultiesByNameOrColor = facultyService.getFacultyByNameOrColor("Engineering", "Blue");
+        assertEquals(1, facultiesByNameOrColor.size());
+        assertEquals("Engineering", facultiesByNameOrColor.get(0).getName());
+        assertEquals("Blue", facultiesByNameOrColor.get(0).getColor());
 
-        List<Faculty> blueFaculties = facultyService.getByColor("Blue");
-
-        assertEquals(1, blueFaculties.size());
-        assertEquals("Engineering", blueFaculties.get(0).getName());
-        assertEquals("Blue", blueFaculties.get(0).getColor());
-
-        List<Faculty> greenFaculties = facultyService.getByColor("Green");
-
-        assertEquals(1, greenFaculties.size());
-        assertEquals("Science", greenFaculties.get(0).getName());
-        assertEquals("Green", greenFaculties.get(0).getColor());
-
+        List<Faculty> facultiesByNameOrColor2 = facultyService.getFacultyByNameOrColor("Green", "Red");
+        assertEquals(0, facultiesByNameOrColor2.size());
     }
 }

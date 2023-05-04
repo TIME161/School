@@ -1,7 +1,6 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -23,7 +22,7 @@ public class FacultyService {
         return facultyRepository.save(faculty);
     }
 
-    public List getAll() {
+    public List<Faculty> getAll() {
         return facultyRepository.findAll();
     }
 
@@ -44,17 +43,9 @@ public class FacultyService {
         }
     }
 
-    public List<Faculty> getByColor(String color) {
-        List<Faculty> faculties = facultyRepository.findAll(Sort.by("color").ascending());
-        List<Faculty> result = new ArrayList<>();
-        for (Faculty faculty : faculties) {
-            if (Objects.equals(faculty.getColor(), color)) {
-                result.add(faculty);
-            }
-        }
-        if (result.isEmpty()) {
-            throw new RuntimeException("Color not found: " + color);
-        }
-        return result;
+    public List<Faculty> getFacultyByNameOrColor(String name, String color) {
+        return facultyRepository.findByNameIgnoreCaseOrColorIgnoreCase(name, color);
     }
+
 }
+
