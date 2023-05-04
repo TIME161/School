@@ -89,8 +89,8 @@ public class StudentService {
         }
     }
 
-    public Integer countOfStudents() {
-        return studentRepository.howMuchStudents();
+    public Long countOfStudents() {
+        return studentRepository.count();
     }
 
     public Integer avgAgeOfStudents() {

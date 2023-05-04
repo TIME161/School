@@ -79,7 +79,7 @@ public class StudentController {
     }
 
     @GetMapping("/info/count")
-    public Integer getCountStudents() {
+    public Long getCountStudents() {
         return studentService.countOfStudents();
     }
 
