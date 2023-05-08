@@ -17,6 +17,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.AvatarService;
 import ru.hogwarts.school.service.FacultyService;
+import ru.hogwarts.school.service.InfoService;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.ArrayList;
@@ -45,9 +46,13 @@ public class StudentControllerWebMvcTest {
     @SpyBean
     private StudentService studentService;
     @SpyBean
+    private InfoService infoService;
+    @SpyBean
     private AvatarService avatarService;
     @InjectMocks
     private StudentController studentController;
+    @InjectMocks
+    private InfoController infoController;
 
     @Test
     public void testAdd() throws Exception {
@@ -174,7 +179,7 @@ public class StudentControllerWebMvcTest {
     @Test
     public void testGetCountStudents() throws Exception {
 
-        int count = 10;
+        long count = 10;
         when(studentService.countOfStudents()).thenReturn(count);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/student/info/count"))
