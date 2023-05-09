@@ -234,5 +234,30 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$[4].faculty").value(faculty));
 
     }
+
+    @Test
+    public void testAverageStudentAge() throws Exception {
+        final long id1 = 1;
+        final String name1 = "Harold";
+        final int age1 = 20;
+        Faculty faculty1 = new Faculty(1L, "Puff", "Red");
+        Student student1 = new Student(id1, name1, age1, faculty1);
+
+        final long id2 = 2;
+        final String name2 = "Julia";
+        final int age2 = 40;
+        Faculty faculty2 = new Faculty(2L, "Puff", "Blue");
+        Student student2 = new Student(id2, name2, age2, faculty2);
+
+        List<Student> students = new ArrayList<>();
+        students.add(student1);
+        students.add(student2);
+
+        when(studentRepository.findAll()).thenReturn(students);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/student/info/averageStudentAge"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Double.toString(30.0)));
+    }
 }
 

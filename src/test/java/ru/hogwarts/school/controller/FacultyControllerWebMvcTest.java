@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.AvatarRepository;
@@ -20,10 +22,12 @@ import ru.hogwarts.school.service.InfoService;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -161,4 +165,22 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$[1].name").value(name2))
                 .andExpect(jsonPath("$[1].color").value(color2));
     }
+
+    @Test
+    public void testFacultyWithLongestName() throws Exception {
+        Faculty faculty = new Faculty(1L, "Engineering and Applied Science", "red");
+        List<Faculty> faculties = Arrays.asList(faculty);
+
+        when(facultyRepository.findAll()).thenReturn(faculties);
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/faculty/info/faculty-with-longest-name"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        Faculty resultFaculty = new ObjectMapper().readValue(content, Faculty.class);
+
+        assertEquals(faculty, resultFaculty);
+    }
 }
+
