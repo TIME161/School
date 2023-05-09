@@ -103,4 +103,14 @@ public class StudentController {
         return studentService.getAverageStudentAge();
     }
 
+    @GetMapping("/info/show-names-no-synchronization-threads")
+    public void namesNoThreadSynch() {
+        studentService.getNamesNoThreadSynch();
+    }
+
+    @GetMapping("/info/show-names-with-synchronization-threads")
+    public void namesWithThreadSynch() {
+        studentService.getNamesWithThreadSynch();
+    }
+
 }
