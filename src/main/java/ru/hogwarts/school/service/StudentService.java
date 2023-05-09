@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
@@ -12,6 +14,7 @@ import java.util.Optional;
 
 @Service
 public class StudentService {
+    Logger logger = LoggerFactory.getLogger(StudentService.class);
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
@@ -19,14 +22,17 @@ public class StudentService {
     }
 
     public Object add(Student student) {
+        logger.debug("Method add is Called");
         return studentRepository.save(student);
     }
 
     public List<Student> getAll() {
+        logger.debug("Method getAll is Called");
         return studentRepository.findAll();
     }
 
     public Student getById(Long id) {
+        logger.debug("Method getById is Called");
         Optional<Student> student = studentRepository.findById(id);
         if (student.isPresent()) {
             return student.get();
@@ -36,14 +42,17 @@ public class StudentService {
     }
 
     public Object update(Student student) {
+        logger.debug("Method update is Called");
         return studentRepository.save(student);
     }
 
     public void delete(long id) {
+        logger.debug("Method delete is Called");
         studentRepository.deleteById(id);
     }
 
     public List<Student> getByAge(int age) {
+        logger.debug("Method getByAge is Called");
         List<Student> students = studentRepository.findAll(Sort.by("age").ascending());
         List<Student> result = new ArrayList<>();
         for (Student student : students) {
@@ -58,6 +67,7 @@ public class StudentService {
     }
 
     public List<Student> findByAgeBetween(int min, int max) {
+        logger.debug("Method findByAgeBetween is Called");
         List<Student> students = studentRepository.findAll(Sort.by("age").ascending());
         List<Student> result = new ArrayList<>();
         for (Student student : students) {
@@ -73,14 +83,17 @@ public class StudentService {
     }
 
     public List<Student> findByFaculty(Long id) {
+        logger.debug("Method findByFaculty is Called");
         return studentRepository.findByFaculty_Id(id);
     }
 
     public Student findByName(String name) {
+        logger.debug("Method findByName is Called");
         return studentRepository.findByNameIgnoreCase(name);
     }
 
     public Faculty getFacultyByStudentName(String name) {
+        logger.debug("Method getFacultyByStudentName is Called");
         Student student = studentRepository.findByNameIgnoreCase(name);
         if (student != null) {
             return student.getFaculty();
@@ -90,14 +103,17 @@ public class StudentService {
     }
 
     public Long countOfStudents() {
+        logger.debug("Method countOfStudents is Called");
         return studentRepository.count();
     }
 
     public Integer avgAgeOfStudents() {
+        logger.debug("Method avgAgeOfStudents is Called");
         return studentRepository.avgAgeStudents();
     }
 
     public List<Student> getLastFiveStudents() {
+        logger.debug("Method getLastFiveStudents is Called");
         return studentRepository.findLastFiveStudents();
     }
 }

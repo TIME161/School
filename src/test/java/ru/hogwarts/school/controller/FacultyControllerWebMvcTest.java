@@ -16,6 +16,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.AvatarService;
 import ru.hogwarts.school.service.FacultyService;
+import ru.hogwarts.school.service.InfoService;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.ArrayList;
@@ -42,11 +43,15 @@ public class FacultyControllerWebMvcTest {
     @SpyBean
     private FacultyService facultyService;
     @SpyBean
+    private InfoService infoService;
+    @SpyBean
     private StudentService studentService;
     @SpyBean
     private AvatarService avatarService;
     @InjectMocks
     private FacultyController facultyController;
+    @InjectMocks
+    private InfoController infoController;
 
     @Test
     public void testAdd() throws Exception {
