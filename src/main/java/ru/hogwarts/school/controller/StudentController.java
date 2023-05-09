@@ -93,4 +93,14 @@ public class StudentController {
         return studentService.getLastFiveStudents();
     }
 
+    @GetMapping("/info/sort-name")
+    public List<String> sortNameByLetter(@RequestParam() String letter) {
+        return studentService.sortNameByLetter(letter);
+    }
+
+    @GetMapping("/info/averageStudentAge")
+    public double averageStudentAge() {
+        return studentService.getAverageStudentAge();
+    }
+
 }
