@@ -137,4 +137,44 @@ public class StudentService {
                 .average()
                 .orElse(0.0);
     }
+
+    public void getNamesNoThreadSynch() {
+        printerNamesStudentsNoSynch(0);
+        printerNamesStudentsNoSynch(1);
+
+        new Thread(() -> {
+            printerNamesStudentsNoSynch(2);
+            printerNamesStudentsNoSynch(3);
+        }).start();
+
+        new Thread(() -> {
+            printerNamesStudentsNoSynch(4);
+            printerNamesStudentsNoSynch(5);
+        }).start();
+    }
+
+    public void getNamesWithThreadSynch() {
+        printerNamesStudentsWithSynch(0);
+        printerNamesStudentsWithSynch(1);
+
+        new Thread(() -> {
+            printerNamesStudentsWithSynch(2);
+            printerNamesStudentsWithSynch(3);
+        }).start();
+
+        new Thread(() -> {
+            printerNamesStudentsWithSynch(4);
+            printerNamesStudentsWithSynch(5);
+        }).start();
+    }
+
+    public void printerNamesStudentsNoSynch(int num) {
+        List<Student> students = studentRepository.findAll();
+        System.out.println(students.get(num).getName());
+    }
+
+    public synchronized void  printerNamesStudentsWithSynch(int num) {
+        List<Student> students = studentRepository.findAll();
+        System.out.println(students.get(num).getName());
+    }
 }
